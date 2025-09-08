@@ -1,1 +1,1 @@
-visit https://boishakhi-fashion.vercel.app/
+THIS IS A DATABASE WEBSITE FOR OUR CLOTHING SHOP
