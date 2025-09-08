@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Database, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react'
 import { dbManager } from '../lib/database'
+import { isSupabaseConfigured } from '../lib/supabase'
 
 const DatabaseStatus: React.FC = () => {
   const [status, setStatus] = useState<{
@@ -18,6 +19,17 @@ const DatabaseStatus: React.FC = () => {
   const checkStatus = async () => {
     setLoading(true)
     try {
+      // Check if Supabase is configured first
+      if (!isSupabaseConfigured()) {
+        setStatus({
+          connected: false,
+          tablesExist: false,
+          sampleDataExists: false,
+          error: 'Supabase environment variables are not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment variables.'
+        })
+        return
+      }
+      
       const healthStatus = await dbManager.getHealthStatus()
       setStatus(healthStatus)
     } catch (error: any) {

@@ -45,7 +45,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <div className="flex items-center">
             <Package className="h-8 w-8 text-blue-600" />
-            <span className="ml-2 text-lg font-bold text-gray-900">Bengali Fashion</span>
+            <span className="ml-2 text-lg font-bold text-gray-900">Boishakhi Fashion</span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -91,8 +91,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </button>
               <div className="flex-shrink-0 flex items-center">
                 <Package className="h-8 w-8 text-blue-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">Bengali Fashion Store</span>
-                <span className="ml-2 text-lg font-bold text-gray-900 sm:hidden">Bengali Fashion</span>
+                <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">Boishakhi Fashion Store</span>
+                <span className="ml-2 text-lg font-bold text-gray-900 sm:hidden">Boishakhi Fashion</span>
               </div>
             </div>
             {/* Desktop navigation */}
