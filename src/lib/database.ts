@@ -115,7 +115,6 @@ export class DatabaseManager {
       }
     }
   }
-}
 
   // Mock data methods
   getMockProducts(): Product[] {

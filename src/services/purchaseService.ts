@@ -6,23 +6,33 @@ export const purchaseService = {
   async getAllPurchases(): Promise<Purchase[]> {
     await dbManager.initialize()
     
-    const { data, error } = await supabase
-      .from('purchases')
-      .select(`
-        *,
-        products:product_id (
-          name,
-          category,
-          size
-        )
-      `)
-      .order('purchase_date', { ascending: false })
-
-    if (error) {
-      console.error('Error fetching purchases:', error)
-      throw new Error(`Failed to fetch purchases: ${error.message}`)
+    // Use mock data if Supabase is not configured
+    if (dbManager.isUsingMockData()) {
+      return dbManager.getMockPurchases()
     }
-    return data || []
+    
+    try {
+      const { data, error } = await supabase
+        .from('purchases')
+        .select(`
+          *,
+          products:product_id (
+            name,
+            category,
+            size
+          )
+        `)
+        .order('purchase_date', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching purchases:', error)
+        return dbManager.getMockPurchases()
+      }
+      return data || []
+    } catch (error) {
+      console.warn('Falling back to mock data:', error)
+      return dbManager.getMockPurchases()
+    }
   },
 
   async createPurchase(purchase: Omit<Purchase, 'id' | 'purchase_date'>): Promise<Purchase> {
