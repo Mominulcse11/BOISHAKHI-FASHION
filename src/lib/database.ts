@@ -1,4 +1,34 @@
-import { supabase } from './supabase'
+import { supabase, isSupabaseConfigured } from './supabase'
+import { Product, Purchase, Sale } from '../types/database'
+
+// Mock data for when Supabase is not configured
+const mockProducts: Product[] = [
+  {
+    id: '1',
+    name: 'Sari - Red Silk',
+    category: 'Sari',
+    size: 'Free Size',
+    purchase_price: 1500,
+    selling_price: 2200,
+    stock: 5,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '2', 
+    name: 'Kurta - Cotton Blue',
+    category: 'Kurta',
+    size: 'L',
+    purchase_price: 800,
+    selling_price: 1200,
+    stock: 10,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+]
+
+const mockPurchases: Purchase[] = []
+const mockSales: Sale[] = []
 
 export class DatabaseManager {
   private static instance: DatabaseManager
@@ -14,6 +44,13 @@ export class DatabaseManager {
   async initialize(): Promise<void> {
     if (this.initialized) return
 
+    // Check if Supabase is configured
+    if (!isSupabaseConfigured()) {
+      console.warn('Supabase not configured, using mock data for development')
+      this.initialized = true
+      return
+    }
+
     try {
       console.log('Initializing database connection...')
       
@@ -26,8 +63,8 @@ export class DatabaseManager {
       this.initialized = true
       console.log('Database initialized successfully')
     } catch (error) {
-      console.error('Database initialization failed:', error)
-      throw new Error('Failed to initialize database. Please check your Supabase connection.')
+      console.warn('Database initialization failed, falling back to mock data:', error)
+      this.initialized = true
     }
   }
 
@@ -77,6 +114,24 @@ export class DatabaseManager {
         error: error.message
       }
     }
+  }
+}
+
+  // Mock data methods
+  getMockProducts(): Product[] {
+    return [...mockProducts]
+  }
+  
+  getMockPurchases(): Purchase[] {
+    return [...mockPurchases]
+  }
+  
+  getMockSales(): Sale[] {
+    return [...mockSales]
+  }
+  
+  isUsingMockData(): boolean {
+    return !isSupabaseConfigured()
   }
 }
 

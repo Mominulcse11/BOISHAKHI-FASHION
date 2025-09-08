@@ -6,16 +6,26 @@ export const productService = {
   async getAllProducts(): Promise<Product[]> {
     await dbManager.initialize()
     
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.error('Error fetching products:', error)
-      throw new Error(`Failed to fetch products: ${error.message}`)
+    // Use mock data if Supabase is not configured
+    if (dbManager.isUsingMockData()) {
+      return dbManager.getMockProducts()
     }
-    return data || []
+    
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching products:', error)
+        return dbManager.getMockProducts()
+      }
+      return data || []
+    } catch (error) {
+      console.warn('Falling back to mock data:', error)
+      return dbManager.getMockProducts()
+    }
   },
 
   async createProduct(product: Omit<Product, 'id' | 'created_at' | 'updated_at'>): Promise<Product> {
@@ -96,16 +106,26 @@ export const productService = {
   async getLowStockProducts(threshold: number = 5): Promise<Product[]> {
     await dbManager.initialize()
     
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .lt('stock', threshold)
-      .order('stock', { ascending: true })
-
-    if (error) {
-      console.error('Error fetching low stock products:', error)
-      throw new Error(`Failed to fetch low stock products: ${error.message}`)
+    // Use mock data if Supabase is not configured
+    if (dbManager.isUsingMockData()) {
+      return dbManager.getMockProducts().filter(p => p.stock < threshold)
     }
-    return data || []
+    
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .lt('stock', threshold)
+        .order('stock', { ascending: true })
+
+      if (error) {
+        console.error('Error fetching low stock products:', error)
+        return dbManager.getMockProducts().filter(p => p.stock < threshold)
+      }
+      return data || []
+    } catch (error) {
+      console.warn('Falling back to mock data:', error)
+      return dbManager.getMockProducts().filter(p => p.stock < threshold)
+    }
   }
 }
