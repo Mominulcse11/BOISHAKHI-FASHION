@@ -7,4 +7,8 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  build: {
+    // Increase chunk size warning limit to avoid noisy warnings on Vercel
+    chunkSizeWarningLimit: 1500,
+  },
 });
