@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useStoreConfig } from '../contexts/StoreConfigContext';
-import { Home, ShoppingCart, TrendingUp, Settings, Bell, MessageCircle } from 'lucide-react';
+import { Home, ShoppingCart, TrendingUp, Settings, Bell, MessageCircle, Plus, Package, BarChart3 } from 'lucide-react';
 
 const MobileLayout = ({ children }) => {
   const location = useLocation();
@@ -9,26 +9,64 @@ const MobileLayout = ({ children }) => {
 
   const navItems = [
     { to: '/dashboard', label: 'হোম', Icon: Home },
-    { to: '/sale', label: 'বিক্রি', Icon: TrendingUp },
     { to: '/purchase', label: 'কেনা', Icon: ShoppingCart },
+    { to: '/inventory', label: 'স্টক', Icon: Package },
     { to: '/settings', label: 'সেটিংস', Icon: Settings },
   ];
 
   const isActive = (to) => location.pathname.startsWith(to);
 
+  const QuickActions = () => (
+    <div className="-mt-8 px-4">
+      <div className="grid grid-cols-2 gap-3">
+        <Link to="/sale" className="rounded-xl p-4 bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-md active:scale-[0.99] transition">
+          <div className="flex items-center">
+            <TrendingUp className="w-5 h-5 mr-2" />
+            <span className="font-semibold">বিক্রি শুরু করুন</span>
+          </div>
+          <p className="text-xs text-white/90 mt-1">দ্রুত বিলিং</p>
+        </Link>
+        <Link to="/purchase" className="rounded-xl p-4 bg-white shadow-md border border-gray-100 active:scale-[0.99] transition">
+          <div className="flex items-center text-gray-800">
+            <ShoppingCart className="w-5 h-5 mr-2 text-indigo-600" />
+            <span className="font-semibold">কেনা যোগ করুন</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">সরবরাহকারীর বিল</p>
+        </Link>
+        <Link to="/add-product" className="rounded-xl p-4 bg-white shadow-md border border-gray-100 active:scale-[0.99] transition">
+          <div className="flex items-center text-gray-800">
+            <Plus className="w-5 h-5 mr-2 text-violet-600" />
+            <span className="font-semibold">পণ্য যোগ</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">ছবি, সাইজ, স্টক</p>
+        </Link>
+        <Link to="/reports" className="rounded-xl p-4 bg-white shadow-md border border-gray-100 active:scale-[0.99] transition">
+          <div className="flex items-center text-gray-800">
+            <BarChart3 className="w-5 h-5 mr-2 text-emerald-600" />
+            <span className="font-semibold">রিপোর্ট</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">বিক্রি, লাভ, স্টক</p>
+        </Link>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50 lg:hidden">
-      {/* Top App Bar (original design, inspired by screenshots but distinct) */}
-      <header className="px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-400 text-white shadow">
+    <div className="min-h-screen bg-gray-50 lg:hidden relative">
+      {/* Decorative gradient backdrop */}
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 opacity-90" />
+
+      {/* Glass top bar */}
+      <header className="relative px-4 pt-5 pb-16 text-white">
         <div className="flex items-center justify-between">
           <div className="min-w-0">
-            <h1 className="truncate font-bold text-lg">
+            <h1 className="truncate font-bold text-lg drop-shadow-sm">
               {storeConfig?.store_name || 'Universal Store'}
             </h1>
-            <p className="text-white/90 text-xs">আপনার স্মার্ট দোকান সহায়ক</p>
+            <p className="text-white/90 text-xs">আজ ভালো বিক্রি হোক 🎉</p>
           </div>
           <div className="flex items-center gap-3">
-            <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="Message">
+            <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="Message" className="active:opacity-80">
               <MessageCircle className="w-5 h-5" />
             </a>
             <button aria-label="Notifications" className="active:opacity-80">
@@ -41,10 +79,24 @@ const MobileLayout = ({ children }) => {
         </div>
       </header>
 
-      <main className="pb-20">{children}</main>
+      {/* Quick actions on dashboard only */}
+      {location.pathname === '/dashboard' && <QuickActions />}
+
+      <main className="relative px-4 pb-28 -mt-6">
+        {children}
+      </main>
+
+      {/* Floating Action Button for fast sale */}
+      <Link
+        to="/sale"
+        aria-label="Start Sale"
+        className="fixed bottom-16 left-1/2 -translate-x-1/2 z-20 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-full shadow-lg w-14 h-14 flex items-center justify-center active:scale-95"
+      >
+        <TrendingUp className="w-6 h-6" />
+      </Link>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-sm">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-10">
         <div className="grid grid-cols-4">
           {navItems.map(({ to, label, Icon }) => (
             <Link
@@ -53,9 +105,9 @@ const MobileLayout = ({ children }) => {
               className="flex flex-col items-center justify-center py-2 text-xs"
             >
               <Icon
-                className={`w-5 h-5 mb-0.5 ${isActive(to) ? 'text-amber-600' : 'text-gray-400'}`}
+                className={`w-5 h-5 mb-0.5 ${isActive(to) ? 'text-indigo-600' : 'text-gray-400'}`}
               />
-              <span className={isActive(to) ? 'text-amber-700 font-medium' : 'text-gray-500'}>
+              <span className={isActive(to) ? 'text-gray-900 font-medium' : 'text-gray-500'}>
                 {label}
               </span>
             </Link>
