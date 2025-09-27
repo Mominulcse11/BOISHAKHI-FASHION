@@ -1,26 +1,23 @@
 import React, { useState } from 'react'
 import { productService } from '../services/productService'
 import { Product } from '../types/database'
+import { useStoreConfig } from '../contexts/StoreConfigContext'
 
 const AddProduct: React.FC = () => {
+  const { storeConfig, loading: configLoading } = useStoreConfig()
   const [formData, setFormData] = useState({
     name: '',
     category: '',
     size: '',
     purchase_price: '',
     selling_price: '',
-    stock: ''
+    stock: '',
+    custom_attributes: {} as Record<string, any>
   })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const categories = [
-    'Saree', 'Panjabi', 'Shirt', 'T-shirt', 'Pant', 'Jeans', 
-    'Kurta', 'Salwar Kameez', 'Dupatta', 'Shawl', 'Lungi', 'Gamcha'
-  ]
-
-  const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'Free Size']
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,10 +28,11 @@ const AddProduct: React.FC = () => {
       const productData = {
         name: formData.name,
         category: formData.category,
-        size: formData.size,
+        ...(storeConfig?.uses_sizes && formData.size ? { size: formData.size } : {}),
         purchase_price: parseFloat(formData.purchase_price),
         selling_price: parseFloat(formData.selling_price),
-        stock: parseInt(formData.stock)
+        stock: parseInt(formData.stock),
+        custom_attributes: formData.custom_attributes
       }
 
       await productService.createProduct(productData)
@@ -45,7 +43,8 @@ const AddProduct: React.FC = () => {
         size: '',
         purchase_price: '',
         selling_price: '',
-        stock: ''
+        stock: '',
+        custom_attributes: {}
       })
 
       setTimeout(() => setSuccess(false), 3000)
@@ -58,10 +57,30 @@ const AddProduct: React.FC = () => {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target
+    if (name.startsWith('custom_')) {
+      const attributeName = name.replace('custom_', '')
+      setFormData(prev => ({
+        ...prev,
+        custom_attributes: {
+          ...prev.custom_attributes,
+          [attributeName]: value
+        }
+      }))
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+    }
+  }
+
+  if (configLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="text-gray-500">Loading store configuration...</div>
+      </div>
+    )
   }
 
   return (
@@ -112,7 +131,7 @@ const AddProduct: React.FC = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select category</option>
-                {categories.map((category) => (
+                {storeConfig?.categories?.map((category) => (
                   <option key={category} value={category}>
                     {category}
                   </option>
@@ -120,32 +139,34 @@ const AddProduct: React.FC = () => {
               </select>
             </div>
 
-            <div>
-              <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
-                Size *
-              </label>
-              <select
-                id="size"
-                name="size"
-                value={formData.size}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select size</option>
-                {sizes.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {storeConfig?.uses_sizes && (
+              <div>
+                <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
+                  Size {storeConfig?.uses_sizes ? '*' : ''}
+                </label>
+                <select
+                  id="size"
+                  name="size"
+                  value={formData.size}
+                  onChange={handleChange}
+                  required={storeConfig?.uses_sizes}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select size</option>
+                  {storeConfig?.size_options?.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="purchase_price" className="block text-sm font-medium text-gray-700 mb-1">
-                Purchase Price (৳) *
+                Purchase Price ({storeConfig?.currency_symbol || '৳'}) *
               </label>
               <input
                 type="number"
@@ -163,7 +184,7 @@ const AddProduct: React.FC = () => {
 
             <div>
               <label htmlFor="selling_price" className="block text-sm font-medium text-gray-700 mb-1">
-                Selling Price (৳) *
+                Selling Price ({storeConfig?.currency_symbol || '৳'}) *
               </label>
               <input
                 type="number"
@@ -196,6 +217,51 @@ const AddProduct: React.FC = () => {
               placeholder="0"
             />
           </div>
+
+          {/* Custom Attributes */}
+          {storeConfig?.custom_attributes && storeConfig.custom_attributes.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Additional Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {storeConfig.custom_attributes.map((attr) => (
+                  <div key={attr.name}>
+                    <label 
+                      htmlFor={`custom_${attr.name}`} 
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      {attr.name}
+                    </label>
+                    {attr.type === 'select' ? (
+                      <select
+                        id={`custom_${attr.name}`}
+                        name={`custom_${attr.name}`}
+                        value={formData.custom_attributes[attr.name] || ''}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Select {attr.name.toLowerCase()}</option>
+                        {attr.options?.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type={attr.type === 'number' ? 'number' : 'text'}
+                        id={`custom_${attr.name}`}
+                        name={`custom_${attr.name}`}
+                        value={formData.custom_attributes[attr.name] || ''}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        placeholder={`Enter ${attr.name.toLowerCase()}`}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex justify-end">
             <button

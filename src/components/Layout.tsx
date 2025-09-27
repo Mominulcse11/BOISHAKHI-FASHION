@@ -8,8 +8,10 @@ import {
   BarChart3, 
   Plus,
   Menu,
-  X
+  X,
+  Settings
 } from 'lucide-react'
+import { useStoreConfig } from '../contexts/StoreConfigContext'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -18,14 +20,16 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = React.useState(false)
+  const { storeConfig, loading } = useStoreConfig()
 
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: BarChart3 },
+    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
     { name: 'Add Product', href: '/add-product', icon: Plus },
     { name: 'Inventory', href: '/inventory', icon: Package },
     { name: 'Record Purchase', href: '/purchase', icon: ShoppingCart },
     { name: 'Record Sale', href: '/sale', icon: TrendingUp },
     { name: 'Suppliers', href: '/suppliers', icon: Users },
+    { name: 'Store Settings', href: '/settings', icon: Settings },
   ]
 
   return (
@@ -45,7 +49,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <div className="flex items-center">
             <Package className="h-8 w-8 text-blue-600" />
-            <span className="ml-2 text-lg font-bold text-gray-900">Boishakhi Fashion</span>
+            <span className="ml-2 text-lg font-bold text-gray-900">
+              {loading ? 'Loading...' : (storeConfig?.store_name || 'Universal Store')}
+            </span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -91,8 +97,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </button>
               <div className="flex-shrink-0 flex items-center">
                 <Package className="h-8 w-8 text-blue-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">Boishakhi Fashion Store</span>
-                <span className="ml-2 text-lg font-bold text-gray-900 sm:hidden">Boishakhi Fashion</span>
+                <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">
+                  {loading ? 'Loading...' : (storeConfig?.store_name || 'Universal Store')}
+                </span>
+                <span className="ml-2 text-lg font-bold text-gray-900 sm:hidden">
+                  {loading ? 'Loading...' : (storeConfig?.store_name || 'Universal Store')}
+                </span>
               </div>
             </div>
             {/* Desktop navigation */}

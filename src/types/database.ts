@@ -2,10 +2,11 @@ export interface Product {
   id: string
   name: string
   category: string
-  size: string
+  size?: string // Optional - only for stores that need sizes
   purchase_price: number
   selling_price: number
   stock: number
+  custom_attributes?: Record<string, any> // For flexible attributes like color, brand, etc.
   created_at: string
   updated_at: string
 }
@@ -42,4 +43,26 @@ export interface SalesChartData {
   date: string
   sales: number
   profit: number
+}
+
+export interface StoreConfig {
+  id?: string
+  store_name: string
+  business_type: string
+  categories: string[]
+  uses_sizes: boolean
+  size_options?: string[]
+  custom_attributes?: { name: string; type: 'text' | 'number' | 'select'; options?: string[] }[]
+  currency_symbol: string
+  created_at?: string
+  updated_at?: string
+}
+
+export interface BusinessType {
+  id: string
+  name: string
+  default_categories: string[]
+  uses_sizes: boolean
+  default_size_options: string[]
+  suggested_attributes: { name: string; type: 'text' | 'number' | 'select'; options?: string[] }[]
 }
