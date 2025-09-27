@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:hidden`}>
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <div className="flex items-center">
-            <Package className="h-8 w-8 text-blue-600" />
+            <Package className="h-8 w-8 text-amber-600" />
             <span className="ml-2 text-lg font-bold text-gray-900">
               {loading ? 'Loading...' : (storeConfig?.store_name || 'Universal Store')}
             </span>
@@ -94,12 +94,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Menu className="h-6 w-6" />
               </button>
               <div className="flex-shrink-0 flex items-center">
-                <Package className="h-8 w-8 text-blue-600" />
+                <Package className="h-8 w-8 text-amber-600" />
                 <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">
-                  {loading ? 'Loading...' : (storeConfig?.store_name || 'Universal Store')}
+                  {loading ? 'Loading...' : (storeConfig?.store_name || 'বিক্রেতা')}
                 </span>
                 <span className="ml-2 text-lg font-bold text-gray-900 sm:hidden">
-                  {loading ? 'Loading...' : (storeConfig?.store_name || 'Universal Store')}
+                  {loading ? 'Loading...' : (storeConfig?.store_name || 'বিক্রেতা')}
                 </span>
               </div>
             </div>

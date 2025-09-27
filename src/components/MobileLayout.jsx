@@ -54,7 +54,7 @@ const MobileLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50 lg:hidden relative">
       {/* Decorative gradient backdrop */}
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 opacity-90" />
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 opacity-95" />
 
       {/* Glass top bar */}
       <header className="relative px-4 pt-5 pb-16 text-white">
@@ -63,7 +63,7 @@ const MobileLayout = ({ children }) => {
             <h1 className="truncate font-bold text-lg drop-shadow-sm">
               {storeConfig?.store_name || 'Universal Store'}
             </h1>
-            <p className="text-white/90 text-xs">আজ ভালো বিক্রি হোক 🎉</p>
+            <p className="text-white/90 text-xs">বিক্রেতা — আপনার স্মার্ট দোকান সঙ্গী</p>
           </div>
           <div className="flex items-center gap-3">
             <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="Message" className="active:opacity-80">
@@ -90,7 +90,7 @@ const MobileLayout = ({ children }) => {
       <Link
         to="/sale"
         aria-label="Start Sale"
-        className="fixed bottom-16 left-1/2 -translate-x-1/2 z-20 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-full shadow-lg w-14 h-14 flex items-center justify-center active:scale-95"
+        className="fixed bottom-16 left-1/2 -translate-x-1/2 z-20 bg-gradient-to-r from-amber-600 to-orange-500 text-white rounded-full shadow-lg w-14 h-14 flex items-center justify-center active:scale-95"
       >
         <TrendingUp className="w-6 h-6" />
       </Link>
@@ -105,9 +105,9 @@ const MobileLayout = ({ children }) => {
               className="flex flex-col items-center justify-center py-2 text-xs"
             >
               <Icon
-                className={`w-5 h-5 mb-0.5 ${isActive(to) ? 'text-indigo-600' : 'text-gray-400'}`}
+                className={`w-5 h-5 mb-0.5 ${isActive(to) ? 'text-amber-600' : 'text-gray-400'}`}
               />
-              <span className={isActive(to) ? 'text-gray-900 font-medium' : 'text-gray-500'}>
+              <span className={isActive(to) ? 'text-amber-700 font-medium' : 'text-gray-500'}>
                 {label}
               </span>
             </Link>

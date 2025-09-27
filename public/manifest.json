@@ -1,11 +1,11 @@
 {
-  "name": "Boishakhi Fashion Manager",
-  "short_name": "Store Manager",
-  "description": "Complete store management solution for fashion retailers",
+  "name": "বিক্রেতা",
+  "short_name": "বিক্রেতা",
+  "description": "স্মার্ট দোকান ব্যবস্থাপনা অ্যাপ",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#1f2937",
+  "theme_color": "#f59e0b",
   "orientation": "portrait",
   "icons": [
     {

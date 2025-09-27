@@ -36,7 +36,7 @@ export const StoreConfigProvider: React.FC<StoreConfigProviderProps> = ({ childr
       console.error('Error loading store config:', error)
       // Set default config if none exists
       setStoreConfig({
-        store_name: 'Universal Store',
+        store_name: 'বিক্রেতা',
         business_type: 'general',
         categories: ['General'],
         uses_sizes: false,
