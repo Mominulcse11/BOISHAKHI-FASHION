@@ -38,9 +38,6 @@ export const productService = {
     if (!product.category?.trim()) {
       throw new Error('Product category is required')
     }
-    if (!product.size?.trim()) {
-      throw new Error('Product size is required')
-    }
     if (product.purchase_price < 0) {
       throw new Error('Purchase price cannot be negative')
     }
@@ -127,5 +124,12 @@ export const productService = {
       console.warn('Falling back to mock data:', error)
       return dbManager.getMockProducts().filter(p => p.stock < threshold)
     }
+  },
+
+  async findByBarcode(barcode: string): Promise<Product | null> {
+    await dbManager.initialize()
+    const all = await this.getAllProducts()
+    const found = all.find((p: any) => p?.custom_attributes?.barcode === barcode)
+    return found || null
   }
 }

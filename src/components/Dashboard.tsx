@@ -6,6 +6,8 @@ import { salesService } from '../services/salesService'
 import { productService } from '../services/productService'
 import { DashboardStats, SalesChartData, Product } from '../types/database'
 import { format } from 'date-fns'
+import { supabase } from '../lib/supabase'
+import { requestNotificationPermission, showNotification } from '../lib/notifications'
 
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -22,6 +24,34 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     loadDashboardData()
+  }, [])
+
+  // Real-time sales subscription + notifications
+  useEffect(() => {
+    let isMounted = true
+    requestNotificationPermission().catch(() => {})
+
+    const channel = supabase
+      .channel('realtime-sales')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'sales' }, (payload: any) => {
+        if (!isMounted) return
+        // Update today's totals quickly (best-effort; full refresh still happens via Refresh button)
+        setStats((prev) => ({
+          ...prev,
+          todaysSales: prev.todaysSales + (payload.new?.total_price || 0),
+        }))
+        // Optional toast/notification
+        showNotification('New Sale!', {
+          body: `৳${payload.new?.total_price || 0} sale completed`,
+          tag: 'new-sale',
+        })
+      })
+      .subscribe()
+
+    return () => {
+      isMounted = false
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   const loadDashboardData = async () => {

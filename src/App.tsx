@@ -15,6 +15,7 @@ import Suppliers from './components/Suppliers.tsx'
 import StoreSettings from './components/StoreSettings.tsx'
 import Welcome from './components/Welcome.tsx'
 import CustomerList from './components/CustomerList.tsx'
+import Scan from './components/Scan.tsx'
 
 const LazyAdvancedReports = lazy(() => import('./components/Reports/AdvancedReports.jsx'));
 const LazyCompetitiveFeaturesPage = lazy(() => import('./components/CompetitiveFeatures/CompetitiveFeaturesPage.jsx'));
@@ -51,6 +52,7 @@ function App() {
           <Route path="/settings" element={<CurrentLayout><StoreSettings /></CurrentLayout>} />
           <Route path="/reports" element={<CurrentLayout><Suspense fallback={<div>Loading Reports...</div>}><LazyAdvancedReports /></Suspense></CurrentLayout>} />
           <Route path="/customers" element={<CurrentLayout><CustomerList /></CurrentLayout>} />
+          <Route path="/scan" element={<CurrentLayout><Scan /></CurrentLayout>} />
           <Route path="/competitive-features" element={<CurrentLayout><Suspense fallback={<div>Loading Features...</div>}><LazyCompetitiveFeaturesPage /></Suspense></CurrentLayout>} />
         </Routes>
       </Router>

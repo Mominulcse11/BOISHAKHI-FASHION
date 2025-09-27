@@ -32,7 +32,24 @@ const AddProduct: React.FC = () => {
         purchase_price: parseFloat(formData.purchase_price),
         selling_price: parseFloat(formData.selling_price),
         stock: parseInt(formData.stock),
-        custom_attributes: formData.custom_attributes
+        custom_attributes: (() => {
+          const raw = { ...(formData.custom_attributes || {}) } as Record<string, any>
+          // Build nested variants object from comma-separated fields if present
+          const toArray = (v?: string) => (v ? v.split(',').map(s => s.trim()).filter(Boolean) : undefined)
+          const variants = {
+            sizes: toArray(raw.variants_sizes),
+            colors: toArray(raw.variants_colors),
+            materials: toArray(raw.variants_materials)
+          }
+          // Remove temp fields
+          delete raw.variants_sizes
+          delete raw.variants_colors
+          delete raw.variants_materials
+          return {
+            ...raw,
+            ...(variants.sizes || variants.colors || variants.materials ? { variants } : {})
+          }
+        })()
       }
 
       await productService.createProduct(productData)
@@ -218,7 +235,134 @@ const AddProduct: React.FC = () => {
             />
           </div>
 
-          {/* Custom Attributes */}
+          {/* Fashion-specific fields */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900">Fashion Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="custom_barcode" className="block text-sm font-medium text-gray-700 mb-1">Barcode / SKU</label>
+                <input
+                  type="text"
+                  id="custom_barcode"
+                  name="custom_barcode"
+                  value={(formData.custom_attributes as any).barcode || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Scan or enter barcode"
+                />
+              </div>
+              <div>
+                <label htmlFor="custom_brand" className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+                <input
+                  type="text"
+                  id="custom_brand"
+                  name="custom_brand"
+                  value={(formData.custom_attributes as any).brand || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Brand name"
+                />
+              </div>
+              <div>
+                <label htmlFor="custom_style_code" className="block text-sm font-medium text-gray-700 mb-1">Style Code</label>
+                <input
+                  type="text"
+                  id="custom_style_code"
+                  name="custom_style_code"
+                  value={(formData.custom_attributes as any).style_code || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., ST-2024-001"
+                />
+              </div>
+              <div>
+                <label htmlFor="custom_season" className="block text-sm font-medium text-gray-700 mb-1">Season</label>
+                <input
+                  type="text"
+                  id="custom_season"
+                  name="custom_season"
+                  value={(formData.custom_attributes as any).season || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., Spring 2024"
+                />
+              </div>
+              <div>
+                <label htmlFor="custom_collection" className="block text-sm font-medium text-gray-700 mb-1">Collection</label>
+                <input
+                  type="text"
+                  id="custom_collection"
+                  name="custom_collection"
+                  value={(formData.custom_attributes as any).collection || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., Summer Collection"
+                />
+              </div>
+              <div>
+                <label htmlFor="custom_variants_sizes" className="block text-sm font-medium text-gray-700 mb-1">Sizes (comma-separated)</label>
+                <input
+                  type="text"
+                  id="custom_variants_sizes"
+                  name="custom_variants_sizes"
+                  value={(formData.custom_attributes as any).variants_sizes || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="S,M,L,XL"
+                />
+              </div>
+              <div>
+                <label htmlFor="custom_variants_colors" className="block text-sm font-medium text-gray-700 mb-1">Colors (comma-separated)</label>
+                <input
+                  type="text"
+                  id="custom_variants_colors"
+                  name="custom_variants_colors"
+                  value={(formData.custom_attributes as any).variants_colors || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Red,Blue,Black"
+                />
+              </div>
+              <div>
+                <label htmlFor="custom_variants_materials" className="block text-sm font-medium text-gray-700 mb-1">Materials (comma-separated)</label>
+                <input
+                  type="text"
+                  id="custom_variants_materials"
+                  name="custom_variants_materials"
+                  value={(formData.custom_attributes as any).variants_materials || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Cotton,Silk,Polyester"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor="custom_care_instructions" className="block text-sm font-medium text-gray-700 mb-1">Care Instructions</label>
+                <input
+                  type="text"
+                  id="custom_care_instructions"
+                  name="custom_care_instructions"
+                  value={(formData.custom_attributes as any).care_instructions || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., Machine wash cold"
+                />
+              </div>
+              <div>
+                <label htmlFor="custom_country_of_origin" className="block text-sm font-medium text-gray-700 mb-1">Country of Origin</label>
+                <input
+                  type="text"
+                  id="custom_country_of_origin"
+                  name="custom_country_of_origin"
+                  value={(formData.custom_attributes as any).country_of_origin || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., Bangladesh"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Custom Attributes from Store Settings */}
           {storeConfig?.custom_attributes && storeConfig.custom_attributes.length > 0 && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-gray-900">Additional Information</h3>
