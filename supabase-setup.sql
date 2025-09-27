@@ -25,6 +25,13 @@ CREATE TABLE IF NOT EXISTS products (
   selling_price DECIMAL(10,2) NOT NULL,
   stock INTEGER NOT NULL DEFAULT 0,
   custom_attributes JSONB, -- For flexible product attributes
+  variants JSONB, -- New: For product variants (sizes, colors, materials)
+  season TEXT, -- New: E.g., 'Spring 2024'
+  collection TEXT, -- New: E.g., 'Summer Collection'
+  brand TEXT, -- New: E.g., 'Brand Name'
+  style_code TEXT, -- New: E.g., 'ST-2024-001'
+  care_instructions TEXT, -- New: E.g., 'Machine wash cold'
+  country_of_origin TEXT, -- New: E.g., 'Bangladesh'
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -64,14 +71,15 @@ CREATE POLICY "Allow all operations on products" ON products FOR ALL USING (true
 CREATE POLICY "Allow all operations on purchases" ON purchases FOR ALL USING (true);
 CREATE POLICY "Allow all operations on sales" ON sales FOR ALL USING (true);
 
+
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS src/App.tsx
 BEGIN
     NEW.updated_at = timezone('utc'::text, now());
     RETURN NEW;
 END;
-$$ language 'plpgsql';
+src/App.tsx language 'plpgsql';
 
 -- Create triggers to automatically update updated_at
 CREATE TRIGGER update_store_config_updated_at
@@ -85,7 +93,7 @@ CREATE TRIGGER update_products_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Insert default store configuration
-INSERT INTO store_config (store_name, business_type, categories, uses_sizes, size_options, custom_attributes, currency_symbol) 
+INSERT INTO store_config (store_name, business_type, categories, uses_sizes, size_options, custom_attributes, currency_symbol)
 VALUES (
   'Universal Store',
   'general',
@@ -98,9 +106,9 @@ VALUES (
 
 -- Insert sample data for different store types
 -- Example: Clothing store products
-INSERT INTO products (name, category, size, purchase_price, selling_price, stock, custom_attributes) VALUES
-('Cotton T-Shirt', 'T-shirt', 'M', 500.00, 800.00, 15, '{"color": "Blue", "material": "Cotton"}'::jsonb),
-('Denim Jeans', 'Jeans', 'L', 1200.00, 1800.00, 8, '{"color": "Dark Blue", "material": "Denim"}'::jsonb);
+INSERT INTO products (name, category, size, purchase_price, selling_price, stock, custom_attributes, variants, season, collection, brand, style_code, care_instructions, country_of_origin) VALUES
+('Cotton T-Shirt', 'T-shirt', 'M', 500.00, 800.00, 15, '{"color": "Blue", "material": "Cotton"}'::jsonb, '{"sizes": ["S", "M", "L"], "colors": ["Red", "Blue"]}'::jsonb, 'Spring 2024', 'Summer Collection', 'Fashion Brand', 'ST-2024-001', 'Machine wash cold', 'Bangladesh'),
+('Denim Jeans', 'Jeans', 'L', 1200.00, 1800.00, 8, '{"color": "Dark Blue", "material": "Denim"}'::jsonb, '{"sizes": ["S", "M", "L"], "colors": ["Dark Blue", "Black"]}'::jsonb, 'Spring 2024', 'Summer Collection', 'Fashion Brand', 'ST-2024-002', 'Machine wash cold', 'Bangladesh');
 
 -- Example: Food store products (no size)
 INSERT INTO products (name, category, purchase_price, selling_price, stock, custom_attributes) VALUES

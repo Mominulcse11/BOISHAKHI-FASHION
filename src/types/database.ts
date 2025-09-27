@@ -1,5 +1,6 @@
 export interface Product {
   id: string
+  user_id: string // Owner of the product
   name: string
   category: string
   size?: string // Optional - only for stores that need sizes
@@ -13,6 +14,7 @@ export interface Product {
 
 export interface Purchase {
   id: string
+  user_id: string // Owner of the purchase
   product_id: string
   supplier: string
   quantity: number
@@ -23,6 +25,7 @@ export interface Purchase {
 
 export interface Sale {
   id: string
+  user_id: string // Owner of the sale
   product_id: string
   quantity: number
   selling_price: number
@@ -47,6 +50,7 @@ export interface SalesChartData {
 
 export interface StoreConfig {
   id?: string
+  user_id: string // Owner of the store
   store_name: string
   business_type: string
   categories: string[]

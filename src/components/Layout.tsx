@@ -1,17 +1,18 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { 
-  Package, 
-  ShoppingCart, 
-  TrendingUp, 
-  Users, 
-  BarChart3, 
+import {
+  Package,
+  ShoppingCart,
+  TrendingUp,
+  Users,
+  BarChart3,
   Plus,
   Menu,
   X,
   Settings
 } from 'lucide-react'
 import { useStoreConfig } from '../contexts/StoreConfigContext'
+import LanguageSwitcher from './ui/LanguageSwitcher' // Add this line
 
 interface LayoutProps {
   children: React.ReactNode
@@ -30,22 +31,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Record Sale', href: '/sale', icon: TrendingUp },
     { name: 'Suppliers', href: '/suppliers', icon: Users },
     { name: 'Store Settings', href: '/settings', icon: Settings },
+    { name: 'Reports', href: '/reports', icon: BarChart3 },
+    { name: 'Customers', href: '/customers', icon: Users },
+    { name: 'Competitive Features', href: '/competitive-features', icon: BarChart3 }
   ]
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Mobile sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div className={ixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden }>
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <div className="flex items-center">
             <Package className="h-8 w-8 text-blue-600" />
@@ -69,11 +71,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 key={item.name}
                 to={item.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  isActive
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
+                className={lex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors }
               >
                 <Icon className="h-5 w-5 mr-3" />
                 {item.name}
@@ -114,22 +112,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      isActive
-                        ? 'text-blue-600 bg-blue-50'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
+                    className={inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors }
                   >
                     <Icon className="h-4 w-4 mr-2" />
                     {item.name}
                   </Link>
                 )
               })}
+              <LanguageSwitcher /> {/* Add LanguageSwitcher */}
             </div>
           </div>
         </div>
       </nav>
-      
+
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {children}
       </main>
