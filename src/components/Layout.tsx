@@ -47,7 +47,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       )}
 
       {/* Mobile sidebar */}
-      <div className={ixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden }>
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:hidden`}>
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <div className="flex items-center">
             <Package className="h-8 w-8 text-blue-600" />
@@ -71,7 +71,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 key={item.name}
                 to={item.href}
                 onClick={() => setSidebarOpen(false)}
-                className={lex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors }
+                className={`flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors`}
               >
                 <Icon className="h-5 w-5 mr-3" />
                 {item.name}
@@ -112,7 +112,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors }
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors`}
                   >
                     <Icon className="h-4 w-4 mr-2" />
                     {item.name}

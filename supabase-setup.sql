@@ -74,12 +74,12 @@ CREATE POLICY "Allow all operations on sales" ON sales FOR ALL USING (true);
 
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS src/App.tsx
+RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = timezone('utc'::text, now());
     RETURN NEW;
 END;
-src/App.tsx language 'plpgsql';
+$$ language 'plpgsql';
 
 -- Create triggers to automatically update updated_at
 CREATE TRIGGER update_store_config_updated_at
